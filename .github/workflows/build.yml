@@ -69,3 +69,29 @@ jobs:
         with:
           name: linux-x64
           path: builds/linux-x64/*.so*
+
+  linux-musl-x64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: bootstrap vcpkg
+        run: ./vcpkg/bootstrap-vcpkg.sh
+
+      - name: create build container
+        run: |
+          cd linux
+          ./build-build-env.sh
+
+      - name: build vcpkg packages
+        run: |
+          cd linux
+          ./build-vcpkg.sh x64-linux-musl linux-musl-x64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: linux-musl-x64
+          path: builds/linux-musl-x64/*.so*
